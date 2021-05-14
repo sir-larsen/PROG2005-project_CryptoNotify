@@ -1,6 +1,7 @@
 package api
 
 import (
+	lib "CryptoNotify/coreLib"
 	"net/http"
 )
 
@@ -25,7 +26,7 @@ func VolumeWebhookReg(w http.ResponseWriter, r *http.Request) {
 }
 *
 */
-func readVolHook(w http.ResponseWriter, r *http.Request) (VolumeWebhook, error) {
-	webhook := VolumeWebhook{}
+func readVolHook(w http.ResponseWriter, r *http.Request) (lib.VolumeWebhook, error) {
+	webhook := lib.VolumeWebhook{}
 
 }
