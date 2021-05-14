@@ -1,19 +1,19 @@
 package api
 
-import (
+/*import (
 	lib "CryptoNotify/coreLib"
 	"net/http"
-)
+)*/
 
 //VolumeWebhookReg - Intermediate function for adding webhooks regarding volume changes on the server
-func VolumeWebhookReg(w http.ResponseWriter, r *http.Request) {
+/*func VolumeWebhookReg(w http.ResponseWriter, r *http.Request) {
 	webhook, err := readVolHook(w, r)
 	if err != nil {
 		http.Error(w, "Something went wrong when adding webhook: "+err.Error(), http.StatusBadRequest)
 		return
 	}
 	//ADD WEBHOOK TO FIREBASE HERE
-}
+}*/
 
 //readVolHook - Function for reading in the post request from webhook
 /*
@@ -26,7 +26,7 @@ func VolumeWebhookReg(w http.ResponseWriter, r *http.Request) {
 }
 *
 */
-func readVolHook(w http.ResponseWriter, r *http.Request) (lib.VolumeWebhook, error) {
+/*func readVolHook(w http.ResponseWriter, r *http.Request) (lib.VolumeWebhook, error) {
 	webhook := lib.VolumeWebhook{}
 
-}
+}*/

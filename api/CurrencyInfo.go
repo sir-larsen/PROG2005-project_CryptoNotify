@@ -3,14 +3,14 @@ package api
 import (
 	lib "CryptoNotify/coreLib"
 	"encoding/json"
-	"github.com/go-chi/chi"
 	"net/http"
 	"strings"
+
+	"github.com/go-chi/chi"
 )
 
 func CurrencyHandler(w http.ResponseWriter, r *http.Request) {
-	currency := chi.URLParam(r, "currency_code") //Currency symbol extracted from url
-
+	currency := chi.URLParam(r, "currency_code")             //Currency symbol extracted from url
 	outputStruct := lib.Cryptos[(strings.ToUpper(currency))] //Locating data from internal database
 
 	if outputStruct.Name != "" { //If the currency is found
@@ -20,7 +20,6 @@ func CurrencyHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
-
 	} else {
 		// If symbol matching fails - Check for the full name
 
@@ -28,8 +27,7 @@ func CurrencyHandler(w http.ResponseWriter, r *http.Request) {
 		var currencyName string
 		for key, element := range lib.Cryptos {
 
-			if element.Name == currency {   //Iterate through map for matches on currency names.
-
+			if element.Name == currency { //Iterate through map for matches on currency names.
 				currencyName = key
 			}
 		}
@@ -42,7 +40,7 @@ func CurrencyHandler(w http.ResponseWriter, r *http.Request) {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 			}
 
-		}else {
+		} else {
 			//Currency not found after both symbol and name searching. Bad request
 			http.Error(w, "Error: "+currency+" not found.", http.StatusBadRequest)
 		}

@@ -47,7 +47,7 @@ func setupRoutes() *chi.Mux {
 	router := chi.NewRouter()
 	router.Use(
 		middleware.Logger,          //Logging API requests
-		middleware.RedirectSlashes, //For redirecting non slashed URLs
+		middleware.RedirectSlashes, //For redirecting slashed URLs
 	)
 
 	router.Get("/", api.RootPage)
@@ -64,8 +64,6 @@ func setupRoutes() *chi.Mux {
 		r.Get("/", api.AllHooks)
 
 	})*/
-
-
 
 	return router
 }

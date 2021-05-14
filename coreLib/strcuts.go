@@ -33,7 +33,7 @@ type CryptoInternal struct {
 	CircSupply   float64 `json:"circulating_supply"`
 	TotSupply    float64 `json:"total_supply"`
 	Rank         int32   `json:"cmc_rank"`
-	Price        float64 `json:"price"`
+	Price        float64 `json:"USD_price"`
 	Vol24        float64 `json:"volume_24h"`
 	PercentChg24 float64 `json:"percent_change_24h"`
 	PercentChg7d float64 `json:"percent_change_7d"`
