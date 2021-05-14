@@ -3,19 +3,22 @@ package main
 import (
 	"CryptoNotify/api"
 	lib "CryptoNotify/coreLib"
+	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"time"
 
+	firebase "firebase.google.com/go"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"google.golang.org/api/option"
 )
 
 var Version string = "v1"                    //Version of service
 var Root string = "/cryptonotify/" + Version //URL root path
-var VolHook = Root + "/trends/"              //Registration of volume webhooks
+var VolHook = Root + "/trends"               //Registration of volume webhooks
 var PointHook = Root + ""                    //Registration of price/volume point webhooks
 var PortFolio = Root + ""                    //Registration of portfolio webhooks
 
@@ -56,20 +59,34 @@ func setupRoutes() *chi.Mux {
 	//router.Get(Root+"/policy/{country_name}", api.PolicyEnd)
 	//router.Get(Root+"/diag", api.Diag)
 
-	/*router.Route(Hook, func(r chi.Router) {
-		r.Post("/", api.WebhookReg) //Handling of webhooks to .../notifications
-		r.Delete("/{id}", api.WebhookDel)
-		r.Delete("/", api.WebhookDel)
-		r.Get("/{id}", api.GetWebhook)
-		r.Get("/", api.AllHooks)
+	router.Route(VolHook, func(r chi.Router) {
+		r.Post("/", api.VolumeWebhookReg) //Handling of webhooks to .../notifications
+		//r.Delete("/{id}", api.WebhookDel)
+		//r.Delete("/", api.WebhookDel)
+		//r.Get("/{id}", api.GetWebhook)
+		//r.Get("/", api.AllHooks)
 
-	})*/
+	})
 
 	return router
 }
 
 func main() {
 	fmt.Println("running:")
+
+	//Firebase initialization start
+	api.Ctx = context.Background()
+	sa := option.WithCredentialsFile("./cloud-project-dd1b4-firebase-adminsdk-py7gd-a693745d88.json")
+	app, err := firebase.NewApp(api.Ctx, nil, sa)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	api.Client, err = app.Firestore(api.Ctx)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer api.Client.Close()
+	//Firebase initialization end
 
 	///TEST
 	/*client := &http.Client{}
@@ -99,10 +116,6 @@ func main() {
 	///
 	lib.GetMock()
 	go cryptoPolling()
-
-	//Firebase initialization
-
-	/////////////////////////
 
 	port := port()
 	router := setupRoutes()

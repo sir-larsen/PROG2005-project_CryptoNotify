@@ -51,5 +51,5 @@ type VolumeWebhook struct {
 	CurrentVol        float64 `json:"current_volume"`
 	PercentThreshold  float32 `json:"percentage_threshold"`
 	CurrentPercentage float32 `json:"current_percenatge"`
-	HasTriggered      bool    `json:"webhook_has_triggered"`
+	HasTriggered      bool    `json:"webhook_has_triggered"` //Volume webhook will be deleted upon invocation
 }
