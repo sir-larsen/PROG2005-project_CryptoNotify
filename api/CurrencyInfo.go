@@ -24,7 +24,7 @@ func CurrencyHandler(w http.ResponseWriter, r *http.Request) {
 	} else {
 		// If symbol matching fails - Check for the full name
 
-		currency = strings.Title(currency)
+		currency = strings.Title(strings.ToLower(currency))
 		var currencyName string
 		for key, element := range lib.Cryptos {
 
