@@ -42,6 +42,8 @@ type CryptoInternal struct {
 
 //VolumeWebhook - Webhook struct for volume changes/trends
 type VolumeWebhook struct {
+	Url               string  `json:"url"`
+	Number            string  `json:"phone_number"` //For sending webhook notifications to phone number
 	Id                int     `json:"id"`
 	Name              string  `json:"name"`
 	Symbol            string  `json:"symbol"`
