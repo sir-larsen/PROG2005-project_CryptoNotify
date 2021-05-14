@@ -39,3 +39,15 @@ type CryptoInternal struct {
 	PercentChg7d float64 `json:"percent_change_7d"`
 	MarketCap    float64 `json:"market_cap"`
 }
+
+//VolumeWebhook - Webhook struct for volume changes/trends
+type VolumeWebhook struct {
+	Id                int     `json:"id"`
+	Name              string  `json:"name"`
+	Symbol            string  `json:"symbol"`
+	StartVol          float64 `json:"starting_volume"`
+	CurrentVol        float64 `json:"current_volume"`
+	PercentThreshold  float32 `json:"percentage_threshold"`
+	CurrentPercentage float32 `json:"current_percenatge"`
+	HasTriggered      bool    `json:"webhook_has_triggered"`
+}
