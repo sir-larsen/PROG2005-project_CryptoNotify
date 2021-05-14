@@ -32,7 +32,7 @@ func port() string {
 	return port
 }
 
-// Function for polling and caching the response
+// Function for polling, caching the response and then going through the webhooks
 func cryptoPolling() {
 	for {
 		time.Sleep(5 * time.Second)
@@ -43,6 +43,7 @@ func cryptoPolling() {
 			//REAL API
 		}
 		lib.UpdateInternalMap()
+		api.CheckWebhooks()
 	}
 }
 

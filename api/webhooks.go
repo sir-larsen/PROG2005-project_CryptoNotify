@@ -4,8 +4,35 @@ import (
 	lib "CryptoNotify/coreLib"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 )
+
+var volumeWebhooks = make(map[string]lib.VolumeWebhook)
+
+func CheckVolumeWebhooks() {
+	iterat := Client.Collection(collectionVolume).Documents(Ctx)
+	docSnaps, err := iterat.GetAll()
+	if err != nil {
+		fmt.Println(err)
+		fmt.Errorf("SOMETHING WENT WRONG WITH VOLUME WEBHOOKS")
+		return
+	}
+
+	for _, snap := range docSnaps {
+		var webhook lib.VolumeWebhook
+		snap.DataTo(&webhook)
+		webhook.WebhookID = snap.Ref.ID
+		volumeWebhooks[webhook.WebhookID] = webhook
+
+		//updateVolumeWebhook
+	}
+}
+
+func updateVolumeWebhook() {
+	//DO ALL THE VOLUME STUFF CHECKS
+	//IF TRIGGERED, SEND TO URL AND POSSIBLY PHONE NUMBA
+}
 
 //VolumeWebhookReg - Intermediate function for adding webhooks regarding volume changes on the server
 func VolumeWebhookReg(w http.ResponseWriter, r *http.Request) {
