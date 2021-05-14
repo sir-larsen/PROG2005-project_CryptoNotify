@@ -22,18 +22,20 @@ func CurrencyHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 	} else {
+		// If symbol matching fails - Check for the full name
+
 		currency = strings.Title(currency)
 		var currencyName string
 		for key, element := range lib.Cryptos {
 
-			if element.Name == currency {
+			if element.Name == currency {   //Iterate through map for matches on currency names.
 
 				currencyName = key
 			}
 		}
 		outputStruct2 := lib.Cryptos[(strings.ToUpper(currencyName))]
 
-		if outputStruct2.Name != "" {
+		if outputStruct2.Name != "" { //If there was a true match and no empty struct is created
 			w.Header().Add("content-type", "application/json")
 			err := json.NewEncoder(w).Encode(outputStruct2) //Display in json-format
 			if err != nil {
@@ -41,9 +43,8 @@ func CurrencyHandler(w http.ResponseWriter, r *http.Request) {
 			}
 
 		}else {
-			//Currency not found. Bad request
+			//Currency not found after both symbol and name searching. Bad request
 			http.Error(w, "Error: "+currency+" not found.", http.StatusBadRequest)
 		}
-
 	}
 }
