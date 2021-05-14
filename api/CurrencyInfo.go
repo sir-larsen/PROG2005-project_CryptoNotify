@@ -10,12 +10,8 @@ import (
 
 func CurrencyHandler(w http.ResponseWriter, r *http.Request) {
 	currency := chi.URLParam(r, "currency_code")
-	capital := strings.ToUpper(currency)
 
-	var outputStruct lib.CryptoInternal
-	outputStruct = lib.Cryptos[capital]
-
-
+	outputStruct := lib.Cryptos[(strings.ToUpper(currency))]
 
 	w.Header().Add("content-type", "application/json")
 	err := json.NewEncoder(w).Encode(outputStruct)
