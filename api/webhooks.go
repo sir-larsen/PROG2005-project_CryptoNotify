@@ -41,7 +41,6 @@ func VolumeWebhookReg(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Something went wrong when adding webhook: "+err.Error(), http.StatusBadRequest)
 		return
 	}
-	//ADD WEBHOOK TO FIREBASE HERE
 	AddVolumeWebhook(webhook, w, r)
 }
 

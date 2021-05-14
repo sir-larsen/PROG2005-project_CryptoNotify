@@ -43,7 +43,7 @@ func cryptoPolling() {
 			//REAL API
 		}
 		lib.UpdateInternalMap()
-		api.CheckWebhooks()
+		api.CheckVolumeWebhooks()
 	}
 }
 
