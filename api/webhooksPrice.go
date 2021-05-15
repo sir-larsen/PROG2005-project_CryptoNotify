@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"errors"
 )
 
 var priceWebhooks = make(map[string]lib.PriceWebhook)
@@ -90,3 +91,42 @@ func updatePriceWebhookCurrent(webhook lib.PriceWebhook) error {
 	return nil
 }
 
+
+func PriceWebhookReg(w http.ResponseWriter, r *http.Request) {
+	webhook, err := readPriceHook(w, r)
+	if err != nil {
+		http.Error(w, "Something went wrong when adding webhook: "+err.Error(), http.StatusBadRequest)
+		return
+	}
+	AddPriceWebhook(webhook, w, r)
+}
+
+
+func readPriceHook(w http.ResponseWriter, r *http.Request) (lib.PriceWebhook, error) {
+	webhook := lib.PriceWebhook{}
+	err := json.NewDecoder(r.Body).Decode(&webhook)
+	if err != nil {
+		return lib.PriceWebhook{}, err
+	}
+
+	//Checking webhook data for trash here. That the currency exists in the structure
+	exist := false
+	if _, ok := lib.Cryptos[webhook.Symbol]; ok {
+		exist = true
+	}
+	if !exist { //If symbol doesn't exist
+		return lib.PriceWebhook{}, errors.New("Currency is not tracked or doesn't exist")
+	}
+
+	//Expecting that the user is competent enough to enter a correct url or number
+	if webhook.Url == "" && webhook.Number == "" {
+		return lib.PriceWebhook{}, errors.New("Neither url or number have been entered, provide at least one")
+	}
+
+	//If come to this point, standard values will be inserted
+	webhook.CurrentPrice = lib.Cryptos[webhook.Symbol].Price
+	webhook.Name = lib.Cryptos[webhook.Symbol].Name
+	webhook.HasTriggered = false
+
+	return webhook, nil
+}
