@@ -61,7 +61,7 @@ func updatePriceWebhook(webhook lib.PriceWebhook) {
 		err := updatePriceWebhookCurrent(webhook)
 		if err != nil {
 			fmt.Println(err)
-			fmt.Println("WEBHOOK_VOLUME WITH FIREBASE_ID: ", webhook.WebhookID, " HAS GONE WRONG IN FIREBASE UPDATE OF CURRENT PRICE")
+			fmt.Println("WEBHOOK_PRICE WITH FIREBASE_ID: ", webhook.WebhookID, " HAS GONE WRONG IN FIREBASE UPDATE OF CURRENT PRICE")
 		}
 
 	}
@@ -90,7 +90,7 @@ func updatePriceWebhookCurrent(webhook lib.PriceWebhook) error {
 	return nil
 }
 
-//WebhookVolumeDel - Function dor user to delete a webhook
+//WebhookPriceDel - Function dor user to delete a webhook
 func WebhookPriceDel(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id") //Extracting the id
 	if len(id) != 0 {
@@ -110,7 +110,7 @@ func PriceWebhookReg(w http.ResponseWriter, r *http.Request) {
 }
 
 //readPriceHook - Function for reading in the post request from webhook
-/*Expected format for volume webhook body (example):
+/*Expected format for target-price webhook body (example):
 {
 	"url": "webhook.site/something/something",	    //The URL you want the webhook to be posted to
 	"phone_number": "+4797885707",					//Phone number you want to recieve messages to
@@ -177,6 +177,28 @@ func AllPriceWebhooks(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Add("content-type", "application/json")
 	err := json.NewEncoder(w).Encode(hooks)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+
+//Fuction for getting webhook out to the browser
+func GetPriceWebhook(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id") //Extracting the id
+	dsnap, err := Client.Collection(collectionPrice).Doc(id).Get(Ctx)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	var m lib.PriceWebhook
+	dsnap.DataTo(&m)
+
+	ref := Client.Collection(collectionPrice).Doc(id)
+	m.WebhookID = ref.ID
+
+	w.Header().Add("content-type", "application/json")
+	err = json.NewEncoder(w).Encode(m)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
