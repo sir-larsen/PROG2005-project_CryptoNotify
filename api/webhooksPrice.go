@@ -2,8 +2,11 @@ package api
 
 import (
 	lib "CryptoNotify/coreLib"
+	"bytes"
 	"cloud.google.com/go/firestore"
+	"encoding/json"
 	"fmt"
+	"net/http"
 )
 
 var priceWebhooks = make(map[string]lib.PriceWebhook)
@@ -46,7 +49,7 @@ func updatePriceWebhook(webhook lib.PriceWebhook) {
 
 	if Triggered == true{
 		webhook.HasTriggered = true
-		//postPriceWebhook
+		postPriceWebhook(webhook)
 	}else {
 
 		err := updatePriceWebhookCurrent(webhook)
@@ -57,6 +60,21 @@ func updatePriceWebhook(webhook lib.PriceWebhook) {
 
 	}
 }
+
+
+
+func postPriceWebhook(webhook lib.PriceWebhook) {
+	buffer := new(bytes.Buffer)
+	err := json.NewEncoder(buffer).Encode(webhook)
+	http.Post(webhook.Url, "application/json", buffer)
+	fmt.Println("Price target webhook with webhookID and symbol: ", webhook.WebhookID, ", ", webhook.Symbol, " has been sent")
+	if err != nil {
+		fmt.Println("ERROR IN POST OF PRICE TARGET WEBHOOK", err)
+	}
+}
+
+
+
 
 func updatePriceWebhookCurrent(webhook lib.PriceWebhook) error {
 	_, err := Client.Collection(collectionPrice).Doc(webhook.WebhookID).Update(Ctx, []firestore.Update{
