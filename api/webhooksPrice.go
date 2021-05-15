@@ -6,9 +6,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"google.golang.org/api/iterator"
 	"log"
 	"net/http"
+
+	"google.golang.org/api/iterator"
 
 	"cloud.google.com/go/firestore"
 	"github.com/go-chi/chi"
@@ -36,7 +37,6 @@ func CheckPriceWebhooks() {
 }
 
 func updatePriceWebhook(webhook lib.PriceWebhook) {
-
 	webhook.CurrentPrice = lib.Cryptos[webhook.Symbol].Price
 	Triggered := false
 
@@ -155,8 +155,6 @@ func readPriceHook(w http.ResponseWriter, r *http.Request) (lib.PriceWebhook, er
 	return webhook, nil
 }
 
-
-
 //Function for rendering all the webhooks to the user
 func AllPriceWebhooks(w http.ResponseWriter, r *http.Request) {
 	var hooks []lib.PriceWebhook
@@ -181,7 +179,6 @@ func AllPriceWebhooks(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }
-
 
 //Fuction for getting webhook out to the browser
 func GetPriceWebhook(w http.ResponseWriter, r *http.Request) {
