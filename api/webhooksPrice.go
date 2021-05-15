@@ -53,7 +53,14 @@ func updatePriceWebhook(webhook lib.PriceWebhook) {
 
 	if Triggered == true {
 		webhook.HasTriggered = true
-		postPriceWebhook(webhook)
+
+		if webhook.Url != "" {
+			postPriceWebhook(webhook)
+		}
+
+		if webhook.Number != "" {
+			SendSmsFromPriceWebhook(webhook)
+		}
 		// Delete webhook
 		//DeletePriceWebhookInternal(webhook.WebhookID) HUSK Å FJERNE KOMMENTAR
 	} else {
@@ -63,7 +70,6 @@ func updatePriceWebhook(webhook lib.PriceWebhook) {
 			fmt.Println(err)
 			fmt.Println("WEBHOOK_PRICE WITH FIREBASE_ID: ", webhook.WebhookID, " HAS GONE WRONG IN FIREBASE UPDATE OF CURRENT PRICE")
 		}
-
 	}
 }
 

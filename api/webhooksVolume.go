@@ -56,9 +56,14 @@ func updateVolumeWebhook(webhook lib.VolumeWebhook) { //HUSK Å SKRIVE ENDRINGER
 		webhook.HasTriggered = true
 
 		//POST WEBHOOK
-		postVolumeWebhook(webhook)
+		if webhook.Url != "" {
+			postVolumeWebhook(webhook)
+		}
 
 		//SMS NOTIFICATION   //TBA
+		if webhook.Number != "" {
+			SendSmsFromVolumeWebhook(webhook)
+		}
 
 		//DELETE WEBHOOK
 		//DeleteVolumeWebhookInternal(webhook.WebhookID) HUSK Å KOMMENTER UT
