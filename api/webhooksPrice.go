@@ -31,6 +31,7 @@ func updatePriceWebhook(webhook lib.PriceWebhook) {
 	webhook.CurrentPrice = lib.Cryptos[webhook.Symbol].Price
 	Triggered := false
 
+	//Logic part of whether a price target has been hit
 	if webhook.IsPriceIncrease == true{
 		if webhook.CurrentPrice >= webhook.TargetPrice{
 			Triggered = true
