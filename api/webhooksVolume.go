@@ -6,9 +6,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 
 	"cloud.google.com/go/firestore"
+	"github.com/go-chi/chi"
+	"google.golang.org/api/iterator"
 )
 
 var volumeWebhooks = make(map[string]lib.VolumeWebhook)
@@ -57,7 +60,9 @@ func updateVolumeWebhook(webhook lib.VolumeWebhook) { //HUSK Å SKRIVE ENDRINGER
 
 		//SMS NOTIFICATION   //TBA
 
-		//DELETE WEBHOOK	 //TBA
+		//DELETE WEBHOOK
+		//DeleteVolumeWebhookInternal(webhook.WebhookID) HUSK Å KOMMENTER UT
+
 	} else {
 		//updateWebhookVolumeVol
 		err := updateVolumeWebhookVol(webhook)
@@ -73,7 +78,17 @@ func updateVolumeWebhook(webhook lib.VolumeWebhook) { //HUSK Å SKRIVE ENDRINGER
 			fmt.Println("WEBHOOK_VOLUME WITH FIREBASE_ID: ", webhook.WebhookID, " HAS GONE WRONG IN FIREBASE UPDATE OF CURRENTPERCENTAGE")
 		}
 		//Send webhook to webhook site, not notification by sms, since then you can track changes in current percentage
-		postVolumeWebhook(webhook)
+		//postVolumeWebhook(webhook)
+	}
+}
+
+//WebhookVolumeDel - Function dor user to delete a webhook
+func WebhookVolumeDel(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id") //Extracting the id
+	if len(id) != 0 {
+		DeleteVolumeWebhookFromAPI(w, r, id)
+	} else {
+		http.Error(w, "NO ID PROVIDED", http.StatusBadRequest)
 	}
 }
 
@@ -163,4 +178,50 @@ func readVolHook(w http.ResponseWriter, r *http.Request) (lib.VolumeWebhook, err
 	webhook.HasTriggered = false
 
 	return webhook, nil
+}
+
+//Function for rendering all the webhooks to the user
+func AllVolumeWebhooks(w http.ResponseWriter, r *http.Request) {
+	var hooks []lib.VolumeWebhook
+	iter := Client.Collection(collectionVolume).Documents(Ctx)
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			log.Fatalf("Failed to iterate: %v", err)
+		}
+		var hook lib.VolumeWebhook
+		doc.DataTo(&hook)
+		hook.WebhookID = doc.Ref.ID
+
+		hooks = append(hooks, hook)
+	}
+	w.Header().Add("content-type", "application/json")
+	err := json.NewEncoder(w).Encode(hooks)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
+//Fuction for getting webhook out to the browser
+func GetVolumeWebhook(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id") //Extracting the id
+	dsnap, err := Client.Collection(collectionVolume).Doc(id).Get(Ctx)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	var m lib.VolumeWebhook
+	dsnap.DataTo(&m)
+
+	ref := Client.Collection(collectionVolume).Doc(id)
+	m.WebhookID = ref.ID
+
+	w.Header().Add("content-type", "application/json")
+	err = json.NewEncoder(w).Encode(m)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }

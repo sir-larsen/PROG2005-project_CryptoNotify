@@ -39,6 +39,25 @@ func AddVolumeWebhook(webhook lib.VolumeWebhook, w http.ResponseWriter, r *http.
 	}
 }
 
+//DeleteVolumeWebhook - for deleting a volume webhook from the webhooks_volume collection in firebase
+func DeleteVolumeWebhookFromAPI(w http.ResponseWriter, r *http.Request, id string) {
+	_, err := Client.Collection(collectionVolume).Doc(id).Delete(Ctx)
+	if err != nil {
+		http.Error(w, "Deletion of "+id+" failed.", http.StatusInternalServerError)
+		return
+	}
+	http.Error(w, "Deletion of "+id+" successful if id existed, if else not nothing happened", http.StatusNoContent)
+}
+
+//DeleteVolumeWebhookInternal - For deleting a volume webhook on the internal side
+func DeleteVolumeWebhookInternal(id string) {
+	_, err := Client.Collection(collectionVolume).Doc(id).Delete(Ctx)
+	if err != nil {
+		fmt.Errorf("Deletion of " + id + " failed.")
+		return
+	}
+}
+
 func AddPriceWebhook(webhook lib.PriceWebhook, w http.ResponseWriter, r *http.Request) {
 
 	ref, _, err := Client.Collection(collectionPrice).Add(Ctx, map[string]interface{}{
@@ -61,11 +80,20 @@ func AddPriceWebhook(webhook lib.PriceWebhook, w http.ResponseWriter, r *http.Re
 }
 
 //DeleteVolumeWebhook - for deleting a volume webhook from the webhooks_volume collection in firebase
-func DeleteVolumeWebhook(w http.ResponseWriter, r *http.Request, id string) {
-	_, err := Client.Collection(collectionVolume).Doc(id).Delete(Ctx)
+func DeletePriceWebhookFromAPI(w http.ResponseWriter, r *http.Request, id string) {
+	_, err := Client.Collection(collectionPrice).Doc(id).Delete(Ctx)
 	if err != nil {
 		http.Error(w, "Deletion of "+id+" failed.", http.StatusInternalServerError)
 		return
 	}
 	http.Error(w, "Deletion of "+id+" successful if id existed, if else not nothing happened", http.StatusNoContent)
+}
+
+//DeleteVolumeWebhookInternal - For deleting a volume webhook on the internal side
+func DeletePriceWebhookInternal(id string) {
+	_, err := Client.Collection(collectionPrice).Doc(id).Delete(Ctx)
+	if err != nil {
+		fmt.Errorf("Deletion of " + id + " failed.")
+		return
+	}
 }

@@ -19,7 +19,7 @@ import (
 var Version string = "v1"                    //Version of service
 var Root string = "/cryptonotify/" + Version //URL root path
 var VolHook = Root + "/trends"               //Registration of volume webhooks
-var PointHook = Root + ""                    //Registration of price/volume point webhooks
+var PointHook = Root + "/pricepoints"        //Registration of price/volume point webhooks
 var PortFolio = Root + ""                    //Registration of portfolio webhooks
 
 var mock bool = true //If mocking the api or not
@@ -35,7 +35,7 @@ func port() string {
 // Function for polling, caching the response and then going through the webhooks
 func cryptoPolling() {
 	for {
-		time.Sleep(10 * time.Second)
+		time.Sleep(15 * time.Second)
 
 		if mock {
 			lib.GetMock()
@@ -44,6 +44,7 @@ func cryptoPolling() {
 		}
 		lib.UpdateInternalMap()
 		api.CheckVolumeWebhooks()
+		api.CheckPriceWebhooks()
 	}
 }
 
@@ -62,8 +63,17 @@ func setupRoutes() *chi.Mux {
 
 	router.Route(VolHook, func(r chi.Router) {
 		r.Post("/", api.VolumeWebhookReg) //Handling of webhooks to .../notifications
-		//r.Delete("/{id}", api.WebhookDel)
-		//r.Delete("/", api.WebhookDel)
+		r.Delete("/{id}", api.WebhookVolumeDel)
+		r.Delete("/", api.WebhookVolumeDel)
+		r.Get("/{id}", api.GetVolumeWebhook)
+		r.Get("/", api.AllVolumeWebhooks)
+
+	})
+
+	router.Route(PointHook, func(r chi.Router) {
+		r.Post("/", api.PriceWebhookReg) //Handling of webhooks to .../notifications
+		r.Delete("/{id}", api.WebhookPriceDel)
+		r.Delete("/", api.WebhookPriceDel)
 		//r.Get("/{id}", api.GetWebhook)
 		//r.Get("/", api.AllHooks)
 
@@ -88,13 +98,6 @@ func main() {
 	}
 	defer api.Client.Close()
 	//Firebase initialization end
-
-	/*x := 758321
-	x /= 100
-	fmt.Println("1% of x is: ", x)
-	x *= 4
-	fmt.Println("4% of x is: ", x)*/
-
 	///TEST
 	/*client := &http.Client{}
 	req, err := http.NewRequest("GET", "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest", nil)

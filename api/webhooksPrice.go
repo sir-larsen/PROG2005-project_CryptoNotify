@@ -3,11 +3,13 @@ package api
 import (
 	lib "CryptoNotify/coreLib"
 	"bytes"
-	"cloud.google.com/go/firestore"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
-	"errors"
+
+	"cloud.google.com/go/firestore"
+	"github.com/go-chi/chi"
 )
 
 var priceWebhooks = make(map[string]lib.PriceWebhook)
@@ -27,7 +29,7 @@ func CheckPriceWebhooks() {
 		webhook.WebhookID = snap.Ref.ID
 		priceWebhooks[webhook.WebhookID] = webhook
 
-		//updatePriceWebhook(webhook) //for later
+		updatePriceWebhook(webhook) //for later
 	}
 }
 
@@ -47,12 +49,12 @@ func updatePriceWebhook(webhook lib.PriceWebhook) {
 		}
 	}
 
-
-	if Triggered == true{
+	if Triggered == true {
 		webhook.HasTriggered = true
 		postPriceWebhook(webhook)
 		// Delete webhook
-	}else {
+		//DeletePriceWebhookInternal(webhook.WebhookID) HUSK Å FJERNE KOMMENTAR
+	} else {
 
 		err := updatePriceWebhookCurrent(webhook)
 		if err != nil {
@@ -63,8 +65,6 @@ func updatePriceWebhook(webhook lib.PriceWebhook) {
 	}
 }
 
-
-
 func postPriceWebhook(webhook lib.PriceWebhook) {
 	buffer := new(bytes.Buffer)
 	err := json.NewEncoder(buffer).Encode(webhook)
@@ -74,9 +74,6 @@ func postPriceWebhook(webhook lib.PriceWebhook) {
 		fmt.Println("ERROR IN POST OF PRICE TARGET WEBHOOK", err)
 	}
 }
-
-
-
 
 func updatePriceWebhookCurrent(webhook lib.PriceWebhook) error {
 	_, err := Client.Collection(collectionPrice).Doc(webhook.WebhookID).Update(Ctx, []firestore.Update{
@@ -91,6 +88,15 @@ func updatePriceWebhookCurrent(webhook lib.PriceWebhook) error {
 	return nil
 }
 
+//WebhookVolumeDel - Function dor user to delete a webhook
+func WebhookPriceDel(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id") //Extracting the id
+	if len(id) != 0 {
+		DeletePriceWebhookFromAPI(w, r, id)
+	} else {
+		http.Error(w, "NO ID PROVIDED", http.StatusBadRequest)
+	}
+}
 
 func PriceWebhookReg(w http.ResponseWriter, r *http.Request) {
 	webhook, err := readPriceHook(w, r)
@@ -111,8 +117,6 @@ func PriceWebhookReg(w http.ResponseWriter, r *http.Request) {
 
 }
 */
-
-
 
 func readPriceHook(w http.ResponseWriter, r *http.Request) (lib.PriceWebhook, error) {
 	webhook := lib.PriceWebhook{}
@@ -140,12 +144,11 @@ func readPriceHook(w http.ResponseWriter, r *http.Request) (lib.PriceWebhook, er
 	webhook.Name = lib.Cryptos[webhook.Symbol].Name
 	webhook.HasTriggered = false
 	webhook.StartPrice = lib.Cryptos[webhook.Symbol].Price
-	if webhook.TargetPrice > webhook.StartPrice{
+	if webhook.TargetPrice > webhook.StartPrice {
 		webhook.IsPriceIncrease = true
-	}else{
+	} else {
 		webhook.IsPriceIncrease = false
 	}
-	
 
 	return webhook, nil
 }
