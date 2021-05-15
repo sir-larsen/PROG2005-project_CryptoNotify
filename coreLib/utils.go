@@ -3,7 +3,10 @@ package coreLib
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
+	"net/url"
 )
 
 var CryptoResp CryptoInfo                     //Global strut with all info regarding all the currencies
@@ -22,6 +25,37 @@ func GetMock() {
 	//fmt.Println(CryptoResp)
 	fmt.Println("STATUS: MOCK PULLED")
 	//fmt.Println(Cryptos)
+}
+
+func GetRealApi() {
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest", nil)
+	if err != nil {
+		log.Print(err)
+	}
+
+	q := url.Values{}
+	q.Add("start", "1")
+	q.Add("limit", "100")
+	q.Add("convert", "USD")
+
+	req.Header.Set("Accepts", "application/json")
+	req.Header.Add("X-CMC_PRO_API_KEY", "fa238227-46eb-4bc2-8e66-37c50f341fdb")
+	req.URL.RawQuery = q.Encode()
+
+	resp, err := client.Do(req)
+	if err != nil {
+		fmt.Println("Error sending request to server")
+		//os.Exit(1)
+	}
+	//defer resp.Body.Close()
+	fmt.Println(resp.Status)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Errorf("Error in reading response body from CMC")
+	}
+	json.Unmarshal(body, &CryptoResp)
+	resp.Body.Close()
 }
 
 //UpdateInternalMap - Function for creating a map for internal representation of currencies

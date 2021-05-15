@@ -35,14 +35,23 @@ func port() string {
 // Function for polling, caching the response and then going through the webhooks
 func cryptoPolling() {
 	for {
-		time.Sleep(15 * time.Second)
+		time.Sleep(1800 * time.Second) //Going half an hour between every GET because of rate limiting
 
 		if mock {
 			lib.GetMock()
 		} else {
 			//REAL API
+			lib.GetRealApi()
 		}
 		lib.UpdateInternalMap()
+		//api.CheckVolumeWebhooks()
+		//api.CheckPriceWebhooks()
+	}
+}
+
+func checkHook() { //Function for checking webhooks, going every 15 seconds in case new wenhooks are added
+	for {
+		time.Sleep(15 * time.Second)
 		api.CheckVolumeWebhooks()
 		api.CheckPriceWebhooks()
 	}
@@ -98,36 +107,14 @@ func main() {
 	}
 	defer api.Client.Close()
 	//Firebase initialization end
-	///TEST
-	/*client := &http.Client{}
-	req, err := http.NewRequest("GET", "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest", nil)
-	if err != nil {
-		log.Print(err)
-		os.Exit(1)
-	}
 
-	q := url.Values{}
-	q.Add("start", "1")
-	q.Add("limit", "100")
-	q.Add("convert", "USD")
-
-	req.Header.Set("Accepts", "application/json")
-	req.Header.Add("X-CMC_PRO_API_KEY", "fa238227-46eb-4bc2-8e66-37c50f341fdb")
-	req.URL.RawQuery = q.Encode()
-
-	resp, err := client.Do(req)
-	if err != nil {
-		fmt.Println("Error sending request to server")
-		os.Exit(1)
-	}
-	fmt.Println(resp.Status)
-	respBody, _ := ioutil.ReadAll(resp.Body)
-	fmt.Println(string(respBody))*/
-	///
-	//api.SendMessage()
 	lib.GetMock()
 	lib.UpdateInternalMap()
+	//lib.GetRealApi()
+	//lib.UpdateInternalMap()
+
 	go cryptoPolling()
+	go checkHook()
 
 	port := port()
 	router := setupRoutes()

@@ -39,9 +39,6 @@ func updateVolumeWebhook(webhook lib.VolumeWebhook) { //HUSK Å SKRIVE ENDRINGER
 	//DO ALL THE VOLUME STUFF CHECKS
 	//IF TRIGGERED, SEND TO URL AND POSSIBLY PHONE NUMBA
 
-	//dec := false
-	//var x float64
-
 	webhook.CurrentVol = lib.Cryptos[webhook.Symbol].Vol24 //Checking if the volume has reached the percentage threshold
 	x := webhook.StartVol
 	x /= 100
@@ -66,6 +63,7 @@ func updateVolumeWebhook(webhook lib.VolumeWebhook) { //HUSK Å SKRIVE ENDRINGER
 			if webhook.Number != "" {
 				//SendSmsFromVolumeWebhook(webhook)
 			}
+			//DELETE WEBHOOK
 		}
 	}
 
