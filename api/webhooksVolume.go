@@ -2,6 +2,7 @@ package api
 
 import (
 	lib "CryptoNotify/coreLib"
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -27,7 +28,7 @@ func CheckVolumeWebhooks() {
 		webhook.WebhookID = snap.Ref.ID
 		volumeWebhooks[webhook.WebhookID] = webhook
 
-		//updateVolumeWebhook(webhook)
+		updateVolumeWebhook(webhook)
 	}
 }
 
@@ -42,11 +43,21 @@ func updateVolumeWebhook(webhook lib.VolumeWebhook) { //HUSK Å SKRIVE ENDRINGER
 
 	if webhook.CurrentVol >= webhook.StartVol+x { //Webhook has exceeded threshold, and is triggered
 		webhook.HasTriggered = true
+
 		//POST WEBHOOK
+		postVolumeWebhook(webhook)
+
 		//SMS NOTIFICATION
 		//DELETE WEBHOOK
 	} else {
 		//REGNE UT CURRENT PERCENTAGE OG LEGGE INN I WEBHOOK FØR SENDE TIL UPDATE
+		x = webhook.StartVol //Figuring out the current percentage
+		y := webhook.CurrentVol
+
+		res := x / y
+		res *= 100
+		finalPercentage := 100 - res
+		webhook.CurrentPercentage = finalPercentage //Updating the current percentage for neat tracking
 
 		//updateWebhookVolumeVol
 		err := updateVolumeWebhookVol(webhook)
@@ -61,9 +72,20 @@ func updateVolumeWebhook(webhook lib.VolumeWebhook) { //HUSK Å SKRIVE ENDRINGER
 			fmt.Println(err)
 			fmt.Println("WEBHOOK_VOLUME WITH FIREBASE_ID: ", webhook.WebhookID, " HAS GONE WRONG IN FIREBASE UPDATE OF CURRENTPERCENTAGE")
 		}
-
+		//Send webhook to webhook site, not notification by sms, since then you can track changes in current percentage
+		//sendVolumeWebhook
+		postVolumeWebhook(webhook)
 	}
+}
 
+//postVolumeWebhook - Function used for posting webhooks to the URL specified
+func postVolumeWebhook(webhook lib.VolumeWebhook) {
+	buffer := new(bytes.Buffer)
+	err := json.NewEncoder(buffer).Encode(webhook)
+	http.Post(webhook.Url, "application/json", buffer)
+	if err != nil {
+		fmt.Println("ERROR IN POST OF VOLUME WEBHOOK", err)
+	}
 }
 
 func updateVolumeWebhookVol(webhook lib.VolumeWebhook) error {
