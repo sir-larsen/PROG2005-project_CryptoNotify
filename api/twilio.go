@@ -13,12 +13,13 @@ var authToken = "a331462d3a8a090916adc7d055ca5323"
 var urlStr = "https://api.twilio.com/2010-04-01/Accounts/" + accountSid + "/Messages.json"
 var twilioNum = "+13157534147"
 
+//SendSmsFromVolumeWebhook - Function for sending SMSs for volume webhooks
 func SendSmsFromVolumeWebhook(webhook lib.VolumeWebhook) {
 	v := url.Values{}
 	v.Set("To", webhook.Number)
 	v.Set("From", twilioNum)
 	threshold := fmt.Sprintf("%.2f", webhook.PercentThreshold)
-	v.Set("Body", "Message from CryptoNotify! Your registered volume webhook hit its threshold of "+threshold+"%. Webhook will now be deleted")
+	v.Set("Body", "Message from CryptoNotify! Your registered volume webhook for "+webhook.Name+" hit its threshold of "+threshold+"%. Webhook will now be deleted")
 	rb := *strings.NewReader(v.Encode())
 
 	// Create client
@@ -34,12 +35,13 @@ func SendSmsFromVolumeWebhook(webhook lib.VolumeWebhook) {
 	fmt.Println(resp.Status)
 }
 
+//SendSmsFromPriceWebhook
 func SendSmsFromPriceWebhook(webhook lib.PriceWebhook) {
 	v := url.Values{}
 	v.Set("To", webhook.Number)
 	v.Set("From", twilioNum)
 	pricePoint := fmt.Sprintf("%.2f", webhook.TargetPrice)
-	v.Set("Body", "Message from CryptoNotify! Your registered price webhook hit its threshold of $"+pricePoint+" USD. Webhook will now be deleted")
+	v.Set("Body", "Message from CryptoNotify! Your registered price webhook for "+webhook.Name+" hit its threshold of $"+pricePoint+" USD. Webhook will now be deleted")
 	rb := *strings.NewReader(v.Encode())
 
 	// Create client

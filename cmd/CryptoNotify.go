@@ -22,7 +22,7 @@ var VolHook = Root + "/trends"               //Registration of volume webhooks
 var PointHook = Root + "/pricetarget"        //Registration of price/volume point webhooks
 var PortFolio = Root + ""                    //Registration of portfolio webhooks
 
-var mock bool = true //If mocking the api or not
+var mock bool = false //If mocking the api or not
 
 func port() string {
 	port := os.Getenv("PORT")
@@ -109,10 +109,10 @@ func main() {
 	defer api.Client.Close()
 	//Firebase initialization end
 
-	lib.GetMock()
-	lib.UpdateInternalMap()
-	//lib.GetRealApi()
+	//lib.GetMock()
 	//lib.UpdateInternalMap()
+	lib.GetRealApi()
+	lib.UpdateInternalMap()
 
 	go cryptoPolling()
 	go checkHook()

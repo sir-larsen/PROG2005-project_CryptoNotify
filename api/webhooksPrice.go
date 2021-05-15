@@ -61,10 +61,10 @@ func updatePriceWebhook(webhook lib.PriceWebhook) {
 		}
 
 		if webhook.Number != "" {
-			//SendSmsFromPriceWebhook(webhook)
+			SendSmsFromPriceWebhook(webhook)
 		}
 		// Delete webhook
-		//DeletePriceWebhookInternal(webhook.WebhookID) HUSK Å FJERNE KOMMENTAR
+		DeletePriceWebhookInternal(webhook.WebhookID)
 	} else {
 
 		err := updatePriceWebhookCurrent(webhook)

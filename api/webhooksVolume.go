@@ -16,6 +16,7 @@ import (
 
 var volumeWebhooks = make(map[string]lib.VolumeWebhook)
 
+//CheckVolumeWebhooks - Function for checking the volume webhooks
 func CheckVolumeWebhooks() {
 	iterat := Client.Collection(collectionVolume).Documents(Ctx)
 	docSnaps, err := iterat.GetAll()
@@ -35,6 +36,7 @@ func CheckVolumeWebhooks() {
 	}
 }
 
+//updateVolumeWebhook - Function for calculating percentages of volumes and sending webhooks and notifications if thresholds are hit
 func updateVolumeWebhook(webhook lib.VolumeWebhook) { //HUSK Å SKRIVE ENDRINGER TILBAKE TIL FIREBASE
 	//DO ALL THE VOLUME STUFF CHECKS
 	//IF TRIGGERED, SEND TO URL AND POSSIBLY PHONE NUMBA
@@ -61,9 +63,10 @@ func updateVolumeWebhook(webhook lib.VolumeWebhook) { //HUSK Å SKRIVE ENDRINGER
 
 			//SMS NOTIFICATION   //TBA
 			if webhook.Number != "" {
-				//SendSmsFromVolumeWebhook(webhook)
+				SendSmsFromVolumeWebhook(webhook)
 			}
 			//DELETE WEBHOOK
+			DeleteVolumeWebhookInternal(webhook.WebhookID)
 		}
 	}
 
@@ -75,10 +78,10 @@ func updateVolumeWebhook(webhook lib.VolumeWebhook) { //HUSK Å SKRIVE ENDRINGER
 		}
 		//SMS NOTIFICATION   //TBA
 		if webhook.Number != "" {
-			//SendSmsFromVolumeWebhook(webhook)
+			SendSmsFromVolumeWebhook(webhook)
 		}
 		//DELETE WEBHOOK
-		//DeleteVolumeWebhookInternal(webhook.WebhookID) HUSK Å KOMMENTER UT
+		DeleteVolumeWebhookInternal(webhook.WebhookID)
 
 	} else {
 		//updateWebhookVolumeVol
