@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CryptoNotify</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css" integrity="sha256-akwTLZec/XAFvgYgVH1T5/369lhA2Efr22xzCNl1nHs=" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <h1 class="text-center" style="margin-top: 3.5vh">CryptoNotify</h1>
+    </div>
+    <p>Welcome to CryptoNotify. This service allows you to get real-time notifications on cryptocurrencies directly to your cellphone.</p>
+    <p>CryptoNotify offers the following services:</p>
+    <ul>
+        <li>Real-time notifications on price-targets</li>
+        <li>Real-time notifications on trends</li>
+        <li>Real-time notifications on changes in your own portfolio</li>
+        <li>Real-time prices on the 100 most popular currencies on this website</li>
+    </ul>
+
+    <p>Use the following endpoint to view real-time prices of the 100 most popular currencies:</p>
+    <code class="http px-5 rounded-corners hljs" style="width: 100%">
+        <span class="hljs-keyword">GET</span> <span class="hljs-string">Path: /cryptonotify/v1/currency/</span>
+    </code>
+    <p>This endpoint can be very useful when registering notifications as you will need the currency's symbol:</p>
+    <p> </br></br>You can also focus on a single currency using its name or symbol as input: </p>
+    <code class="http px-5 rounded-corners hljs" style="width: 100%">
+        <span class="hljs-keyword">GET</span> <span class="hljs-string">Path: /cryptonotify/v1/currency/{:symbol/name}</span>
+    </code>
+
+    <p> </br></br>Here is an example of how it works </p>
+    <code class="http px-5 rounded-corners hljs" style="width: 100%">
+        <span class="hljs-keyword">GET</span> <span class="hljs-string">Path: /cryptonotify/v1/currency/Bitcoin</span>
+    </code>
+    <code class="http px-5 rounded-corners hljs" style="width: 100%">
+        <span class="hljs-keyword">GET</span> <span class="hljs-string">Path: /cryptonotify/v1/currency/btc</span>
+    </code>
+
+    <p> </br></br>In order to register for our notification-service. Use Postman to perform a post-request.</br>
+        This is how to sign up for Trend notifications:</p>
+    <code class="http px-5 rounded-corners hljs" style="width: 100%">
+        <span class="hljs-keyword">POST</span> <span class="hljs-string">Path: /cryptonotify/v1/trends</span>
+    </code>
+    <p> And fill in your information and trend-target in the following format: </p>
+    <p>  {</br>
+        "url": "webhook.site/something/something",	</br>
+        "phone_number": "+4795833037",		</br>
+        "symbol": "ETH",                    </br>
+        "percentage_threshold": 3           </br>
+        } </p> </br>
+    <p>Where the percentage_threshold represents the percentage change in volume for the selected currency.
+    </br> Negative values for the percentage threshold also works in case you want notifications about volume reduction.</br>"symbol" represents the symbol of the chosen
+    currency. Use the similar format like btc for bitcoin or ada for cardano.</br>You WILL need to provide either a phone number or a url.</p>
+    </br></br>
+
+    <p> </br></br>If you want to sign up for a price-target notification the same rules apply:</br></p>
+    <code class="http px-5 rounded-corners hljs" style="width: 100%">
+        <span class="hljs-keyword">POST</span> <span class="hljs-string">Path: /cryptonotify/v1/pricetarget</span>
+    </code>
+    <p> And fill in your information and trend-target in the following format: </p>
+    <p>  {</br>
+
+        "url": "webhook.site/something/something",	 </br>
+        "phone_number": "+4797885707",				</br>
+        "symbol": "XRP",                            </br>
+        "target_price": 2                          </br>
+        } </p> </br>
+
+    <p>Where the target_price represents the price in US dollars. The notification will be sent out as soon as the currency's price hits it.
+        </br> "symbol" represents the symbol of the chosen
+        currency. Use the similar format like btc for bitcoin or ada for cardano.</br>You WILL need to provide either a phone number or a url.</p>
+    </br></br>
+
+
+    <p> </br></br>This service was created by Sander Fuhr and Alexander Eckhoff Larsen. </p></br></br>
+</div>
+</body>
+</html>

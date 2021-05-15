@@ -65,6 +65,7 @@ func setupRoutes() *chi.Mux {
 	)
 
 	router.Get("/", api.RootPage)
+	router.Get(Root+"/currency", api.AllCurrencies)
 	router.Get(Root+"/currency/{currency_code}", api.CurrencyHandler)
 	//router.Get(Root+"/country/{country_name}", api.CasesCountry)
 	//router.Get(Root+"/policy/{country_name}", api.PolicyEnd)
