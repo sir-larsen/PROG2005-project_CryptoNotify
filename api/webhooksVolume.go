@@ -39,32 +39,46 @@ func updateVolumeWebhook(webhook lib.VolumeWebhook) { //HUSK Å SKRIVE ENDRINGER
 	//DO ALL THE VOLUME STUFF CHECKS
 	//IF TRIGGERED, SEND TO URL AND POSSIBLY PHONE NUMBA
 
+	//dec := false
+	//var x float64
+
 	webhook.CurrentVol = lib.Cryptos[webhook.Symbol].Vol24 //Checking if the volume has reached the percentage threshold
 	x := webhook.StartVol
 	x /= 100
 	x *= webhook.PercentThreshold
 
 	//REGNE UT CURRENT PERCENTAGE OG LEGGE INN I WEBHOOK FØR SENDE TIL UPDATE
-	x = webhook.StartVol //Figuring out the current percentage
+	z := webhook.StartVol //Figuring out the current percentage
 	y := webhook.CurrentVol
-	res := x / y
+	res := z / y
 	res *= 100
 	finalPercentage := 100 - res
 	webhook.CurrentPercentage = finalPercentage //Updating the current percentage for neat tracking
 
+	if webhook.PercentThreshold < 0 {
+		if webhook.CurrentPercentage < webhook.PercentThreshold {
+			//POST WEBHOOK
+			if webhook.Url != "" {
+				postVolumeWebhook(webhook)
+			}
+
+			//SMS NOTIFICATION   //TBA
+			if webhook.Number != "" {
+				//SendSmsFromVolumeWebhook(webhook)
+			}
+		}
+	}
+
 	if webhook.CurrentVol >= webhook.StartVol+x { //Webhook has exceeded threshold, and is triggered
 		webhook.HasTriggered = true
-
 		//POST WEBHOOK
 		if webhook.Url != "" {
 			postVolumeWebhook(webhook)
 		}
-
 		//SMS NOTIFICATION   //TBA
 		if webhook.Number != "" {
-			SendSmsFromVolumeWebhook(webhook)
+			//SendSmsFromVolumeWebhook(webhook)
 		}
-
 		//DELETE WEBHOOK
 		//DeleteVolumeWebhookInternal(webhook.WebhookID) HUSK Å KOMMENTER UT
 
@@ -181,6 +195,12 @@ func readVolHook(w http.ResponseWriter, r *http.Request) (lib.VolumeWebhook, err
 	webhook.CurrentVol = lib.Cryptos[webhook.Symbol].Vol24
 	webhook.CurrentPercentage = 0
 	webhook.HasTriggered = false
+
+	/*if webhook.PercentThreshold < 0 {
+		webhook.OnIncrease = false
+	} else {
+		webhook.OnIncrease = true
+	}*/
 
 	return webhook, nil
 }
