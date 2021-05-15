@@ -22,7 +22,7 @@ func CheckPriceWebhooks() {
 		webhook.WebhookID = snap.Ref.ID
 		priceWebhooks[webhook.WebhookID] = webhook
 
-		//updatePriceWebhook(webhook)
+		//updatePriceWebhook(webhook) //for later
 	}
 }
 
@@ -41,7 +41,7 @@ func updatePriceWebhook(webhook lib.PriceWebhook) {
 		}
 	}
 
-	
+
 
 
 
