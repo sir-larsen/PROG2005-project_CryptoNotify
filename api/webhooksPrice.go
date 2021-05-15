@@ -2,6 +2,7 @@ package api
 
 import (
 	lib "CryptoNotify/coreLib"
+	"cloud.google.com/go/firestore"
 	"fmt"
 )
 
@@ -47,15 +48,26 @@ func updatePriceWebhook(webhook lib.PriceWebhook) {
 		webhook.HasTriggered = true
 		//postPriceWebhook
 	}else {
-		/*
+
 		err := updatePriceWebhookCurrent(webhook)
 		if err != nil {
 			fmt.Println(err)
 			fmt.Println("WEBHOOK_VOLUME WITH FIREBASE_ID: ", webhook.WebhookID, " HAS GONE WRONG IN FIREBASE UPDATE OF CURRENTVOL")
-		} */
+		}
 
 	}
 }
 
-
+func updatePriceWebhookCurrent(webhook lib.PriceWebhook) error {
+	_, err := Client.Collection(collectionPrice).Doc(webhook.WebhookID).Update(Ctx, []firestore.Update{
+		{
+			Path:  "CurrentPrice",
+			Value: webhook.CurrentPrice,
+		},
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
