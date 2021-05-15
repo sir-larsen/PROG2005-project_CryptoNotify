@@ -62,7 +62,7 @@ func updateVolumeWebhook(webhook lib.VolumeWebhook) { //HUSK Å SKRIVE ENDRINGER
 
 		//SMS NOTIFICATION   //TBA
 		if webhook.Number != "" {
-			SendSmsFromVolumeWebhook(webhook)
+			//SendSmsFromVolumeWebhook(webhook)
 		}
 
 		//DELETE WEBHOOK

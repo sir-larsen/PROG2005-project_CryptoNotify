@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Corona Case Information Service</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-dark.min.css" integrity="sha256-akwTLZec/XAFvgYgVH1T5/369lhA2Efr22xzCNl1nHs=" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <h1 class="text-center" style="margin-top: 3.5vh">Corona Case Information Service</h1>
+    </div>
+    <p>Welcome to this restful API. The API consists of the following endpoints:</p>
+    <ul>
+        <li>/corona/v1/country/</li>
+        <li>/corona/v1/policy/</li>
+        <li>/corona/v1/diag/</li>
+        <li>/corona/v1/notifications/</li>
+        <li>/corona/v1/viewhooks/</li>
+    </ul>
+
+    <p> The initial endpoint focuses on returning the number of confirmed and recovered Covid-19 cases for a given country.</br> Optionally, the user can specify a date range.</p>
+    <code class="http px-5 rounded-corners hljs" style="width: 100%">
+        <span class="hljs-keyword">GET</span> <span class="hljs-string">Path: /corona/v1/country/{:country_name}{?scope=begin_date-end_date}</span>
+    </code>
+
+    <p> </br></br>The second endpoint provides an overview of the current stringency level of policies regarding Covid-19 for given countries. </p>
+    <code class="http px-5 rounded-corners hljs" style="width: 100%">
+        <span class="hljs-keyword">GET</span> <span class="hljs-string">Path: /corona/v1/policy/{:country_name}{?scope=begin_date-end_date}</span>
+    </code>
+
+    <p> </br></br>The diagnostics interface indicates the availability of all individual services this service depends on.</br> It wil also inform you about the version, uptime and number of webhooks registered on the service</p>
+    <code class="http px-5 rounded-corners hljs" style="width: 100%">
+        <span class="hljs-keyword">GET</span> <span class="hljs-string">Path: /corona/v1/diag/</span>
+    </code>
+
+    <p> </br></br>The notifications endpoint allow you to view, register new and delete webhooks from the firestore database.</br> You can click <a  href="https://webhook.site/#!/027c9160-f682-4552-a8b4-f475de5fc4b1/9ca844af-3cfe-40d4-85e6-4055404f10e9/1">here</a> to see the activity.</p>
+    <code class="http px-5 rounded-corners hljs" style="width: 100%">
+        <span class="hljs-keyword">GET/POST/DELETE</span> <span class="hljs-string">Path: /corona/v1/notifications/</span>
+    </code>
+
+    <p> </br></br>The last endpoint allows you to see all registered webhooks in the browser, for simplicity's sake. </p>
+    <code class="http px-5 rounded-corners hljs" style="width: 100%">
+        <span class="hljs-keyword">GET/POST/DELETE</span> <span class="hljs-string">Path: /corona/v1/viewhooks/</span>
+    </code>
+    <p> </br></br>This page was created by Sander Fuhr. </p>
+</div>
+</body>
+</html>
