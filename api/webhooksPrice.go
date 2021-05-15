@@ -17,6 +17,7 @@ import (
 
 var priceWebhooks = make(map[string]lib.PriceWebhook)
 
+//CheckPriceWebhooks - Function for iterating through webhooks and checking for threshold reach
 func CheckPriceWebhooks() {
 	iterat := Client.Collection(collectionPrice).Documents(Ctx)
 	docSnaps, err := iterat.GetAll()
@@ -36,6 +37,7 @@ func CheckPriceWebhooks() {
 	}
 }
 
+//updatePriceWebhook - Function for checking if price has been reached
 func updatePriceWebhook(webhook lib.PriceWebhook) {
 	webhook.CurrentPrice = lib.Cryptos[webhook.Symbol].Price
 	Triggered := false
@@ -73,6 +75,7 @@ func updatePriceWebhook(webhook lib.PriceWebhook) {
 	}
 }
 
+//postPriceWebhook - Function for POST of webhook to url
 func postPriceWebhook(webhook lib.PriceWebhook) {
 	buffer := new(bytes.Buffer)
 	err := json.NewEncoder(buffer).Encode(webhook)
@@ -83,6 +86,7 @@ func postPriceWebhook(webhook lib.PriceWebhook) {
 	}
 }
 
+//updatePriceWebhook - Function for updating field in firebase
 func updatePriceWebhookCurrent(webhook lib.PriceWebhook) error {
 	_, err := Client.Collection(collectionPrice).Doc(webhook.WebhookID).Update(Ctx, []firestore.Update{
 		{
@@ -125,7 +129,6 @@ func PriceWebhookReg(w http.ResponseWriter, r *http.Request) {
 
 }
 */
-
 func readPriceHook(w http.ResponseWriter, r *http.Request) (lib.PriceWebhook, error) {
 	webhook := lib.PriceWebhook{}
 	err := json.NewDecoder(r.Body).Decode(&webhook)
