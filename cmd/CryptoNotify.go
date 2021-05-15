@@ -51,7 +51,7 @@ func cryptoPolling() {
 
 func checkHook() { //Function for checking webhooks, going every 15 seconds in case new wenhooks are added
 	for {
-		time.Sleep(15 * time.Second)
+		time.Sleep(10 * time.Second)
 		api.CheckVolumeWebhooks()
 		api.CheckPriceWebhooks()
 		api.CheckPortfoliowebhooks()
@@ -118,6 +118,7 @@ func main() {
 	}
 	defer api.Client.Close()
 	//Firebase initialization end
+	api.OnServerRestart()
 
 	//lib.GetMock()
 	//lib.UpdateInternalMap()

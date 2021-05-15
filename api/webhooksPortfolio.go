@@ -14,6 +14,25 @@ import (
 
 var portfolioWebhooks = make(map[string]lib.PortfolioWebhook)
 
+func OnServerRestart() {
+	iterat := Client.Collection(collectionPortfolio).Documents(Ctx)
+	docSnaps, err := iterat.GetAll()
+	if err != nil {
+		fmt.Println(err)
+		fmt.Errorf("SOMETHING WENT WRONG WITH Portfolio WEBHOOKS")
+		return
+	}
+
+	for _, snap := range docSnaps {
+		var webhook lib.PortfolioWebhook
+		snap.DataTo(&webhook)
+		webhook.WebhookID = snap.Ref.ID
+		webhook.GoRoutineExists = false
+		updatePortfolioWebhookVol(webhook)
+	}
+
+}
+
 //CheckPortfoliowebhooks - Function for checking the volume webhooks
 func CheckPortfoliowebhooks() {
 	iterat := Client.Collection(collectionPortfolio).Documents(Ctx)
