@@ -19,7 +19,7 @@ import (
 var Version string = "v1"                    //Version of service
 var Root string = "/cryptonotify/" + Version //URL root path
 var VolHook = Root + "/trends"               //Registration of volume webhooks
-var PointHook = Root + "/pricepoints"        //Registration of price/volume point webhooks
+var PointHook = Root + "/pricetarget"        //Registration of price/volume point webhooks
 var PortFolio = Root + ""                    //Registration of portfolio webhooks
 
 var mock bool = true //If mocking the api or not
@@ -74,8 +74,8 @@ func setupRoutes() *chi.Mux {
 		r.Post("/", api.PriceWebhookReg) //Handling of webhooks to .../notifications
 		r.Delete("/{id}", api.WebhookPriceDel)
 		r.Delete("/", api.WebhookPriceDel)
-		//r.Get("/{id}", api.GetWebhook)
-		//r.Get("/", api.AllHooks)
+		r.Get("/{id}", api.GetPriceWebhook)
+		r.Get("/", api.AllPriceWebhooks)
 
 	})
 
