@@ -54,3 +54,16 @@ type VolumeWebhook struct {
 	HasTriggered      bool    `json:"webhook_has_triggered"` //Volume webhook will be deleted upon invocation
 	WebhookID         string  `json:"webhook_id"`
 }
+
+//PriceWebhook - Webhook for checking if a price point has been reached
+type PriceWebhook struct {
+	Url             string  `json:"url"`
+	Number          string  `json:"phone_number"` //For sending webhook notifications to phone number
+	Name            string  `json:"name"`
+	Symbol          string  `json:"symbol"`
+	StartPrice      float64 `json:"start_price"` //For figuring out if price point is up or down
+	CurrentPrice    float64 `json:"current_price"`
+	TargetPrice     float64 `json:"target_price"`
+	IsPriceIncrease bool    `json:"is_price_increase"`
+	HasTriggered    bool    `json:"webhook_has_triggered"`
+}
