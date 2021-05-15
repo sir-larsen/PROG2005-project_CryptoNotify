@@ -66,4 +66,5 @@ type PriceWebhook struct {
 	TargetPrice     float64 `json:"target_price"`
 	IsPriceIncrease bool    `json:"is_price_increase"`
 	HasTriggered    bool    `json:"webhook_has_triggered"`
+	WebhookID       string  `json:"webhook_id"`
 }
