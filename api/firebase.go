@@ -11,6 +11,7 @@ import (
 )
 
 var collectionVolume = "webhooks_volume"
+var collectionPrice = "webhooks_price"
 var Ctx context.Context
 var Client *firestore.Client
 var projectID = "cloud-project-dd1b4"
