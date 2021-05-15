@@ -63,6 +63,8 @@ POST request to http://10.212.136.23:8080/cryptonotify/v1/pricetarget/ for regis
 
 POST request to http://10.212.136.23:8080/cryptonotify/v1/portfolio/ for registering notifications on personal portfolio
 
+
+### IMPORTANT! do not enter phone number for portfolio webhook. It works but we did not have time to implement the DELETE function, which means you will be spammed upon every timeout as long as the service runs.
 format for registration of portfolio notifications is as following:
 
 {
