@@ -20,7 +20,7 @@ var Version string = "v1"                    //Version of service
 var Root string = "/cryptonotify/" + Version //URL root path
 var VolHook = Root + "/trends"               //Registration of volume webhooks
 var PointHook = Root + "/pricetarget"        //Registration of price/volume point webhooks
-var PortFolio = Root + ""                    //Registration of portfolio webhooks
+var PortFolio = Root + "/portfolio"          //Registration of portfolio webhooks
 
 var mock bool = false //If mocking the api or not
 
@@ -35,7 +35,7 @@ func port() string {
 // Function for polling, caching the response and then going through the webhooks
 func cryptoPolling() {
 	for {
-		time.Sleep(1800 * time.Second) //Going half an hour between every GET because of rate limiting
+		time.Sleep(3600 * time.Second) //Going an hour between every GET because of rate limiting from CMC
 
 		if mock {
 			lib.GetMock()
@@ -54,6 +54,7 @@ func checkHook() { //Function for checking webhooks, going every 15 seconds in c
 		time.Sleep(15 * time.Second)
 		api.CheckVolumeWebhooks()
 		api.CheckPriceWebhooks()
+		api.CheckPortfoliowebhooks()
 	}
 }
 
@@ -77,6 +78,15 @@ func setupRoutes() *chi.Mux {
 		r.Delete("/", api.WebhookVolumeDel)
 		r.Get("/{id}", api.GetVolumeWebhook)
 		r.Get("/", api.AllVolumeWebhooks)
+
+	})
+
+	router.Route(PortFolio, func(r chi.Router) {
+		r.Post("/", api.PortfolioWebhookReg) //Handling of webhooks to .../notifications
+		//r.Delete("/{id}", api.WebhookVolumeDel)
+		//r.Delete("/", api.WebhookVolumeDel)
+		//r.Get("/{id}", api.GetVolumeWebhook)
+		//r.Get("/", api.AllVolumeWebhooks)
 
 	})
 

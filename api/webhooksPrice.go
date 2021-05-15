@@ -117,6 +117,7 @@ func PriceWebhookReg(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	AddPriceWebhook(webhook, w, r)
+	sendWelcomeSmsPrice(webhook)
 }
 
 //readPriceHook - Function for reading in the post request from webhook

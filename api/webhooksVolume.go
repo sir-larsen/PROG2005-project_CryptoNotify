@@ -157,6 +157,7 @@ func VolumeWebhookReg(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	AddVolumeWebhook(webhook, w, r)
+	sendWelcomeSmsVolume(webhook)
 }
 
 //readVolHook - Function for reading in the post request from webhook

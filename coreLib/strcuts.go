@@ -68,3 +68,16 @@ type PriceWebhook struct {
 	HasTriggered    bool    `json:"webhook_has_triggered"`
 	WebhookID       string  `json:"webhook_id"`
 }
+
+//PortfolioWebhook - struct for portfolio management
+type PortfolioWebhook struct {
+	Url             string    `json:"url"`
+	Number          string    `json:"phone_number"` //For sending webhook notifications to phone number
+	Symbols         []string  `json:"symbols"`
+	Holdings        []float64 `json:"holdings"`
+	StartValue      float64   `json:"start_value"`
+	CurrentValue    float64   `json:"current_value"`
+	WebhookID       string    `json:"webhook_id"`
+	GoRoutineExists bool      `json:"go_routine_exists"`
+	Timeout         int       `json:"timeout"`
+}

@@ -12,6 +12,7 @@ import (
 
 var collectionVolume = "webhooks_volume"
 var collectionPrice = "webhooks_price"
+var collectionPortfolio = "webhooks_portfolio"
 var Ctx context.Context
 var Client *firestore.Client
 var projectID = "cloud-project-dd1b4"
@@ -96,4 +97,35 @@ func DeletePriceWebhookInternal(id string) {
 		fmt.Errorf("Deletion of " + id + " failed.")
 		return
 	}
+}
+
+//AddVolumeWebhook - Function for adding a volume webhook to the firebase collection
+func AddPortfolioWebhook(webhook lib.PortfolioWebhook, w http.ResponseWriter, r *http.Request) {
+
+	ref, _, err := Client.Collection(collectionPortfolio).Add(Ctx, map[string]interface{}{
+		"CurrentValue":    webhook.CurrentValue,
+		"GoRoutineExists": webhook.GoRoutineExists,
+		"Holdings":        webhook.Holdings,
+		"Number":          webhook.Number,
+		"StartValue":      webhook.StartValue,
+		"Symbols":         webhook.Symbols,
+		"Timeout":         webhook.Timeout,
+		"Url":             webhook.Url,
+	})
+	if err != nil {
+		http.Error(w, "Error when adding webhook "+webhook.Url, http.StatusBadRequest)
+	} else {
+		fmt.Println("Entry added to collection.")
+		http.Error(w, ref.ID, http.StatusCreated) // Returns document ID
+	}
+}
+
+//DeleteVolumeWebhook - for deleting a volume webhook from the webhooks_volume collection in firebase
+func DeletePortfolioWebhookFromAPI(w http.ResponseWriter, r *http.Request, id string) {
+	_, err := Client.Collection(collectionPortfolio).Doc(id).Delete(Ctx)
+	if err != nil {
+		http.Error(w, "Deletion of "+id+" failed.", http.StatusInternalServerError)
+		return
+	}
+	http.Error(w, "Deletion of "+id+" successful if id existed, if else not nothing happened", http.StatusNoContent)
 }
