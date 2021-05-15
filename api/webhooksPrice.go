@@ -101,6 +101,18 @@ func PriceWebhookReg(w http.ResponseWriter, r *http.Request) {
 	AddPriceWebhook(webhook, w, r)
 }
 
+//readPriceHook - Function for reading in the post request from webhook
+/*Expected format for volume webhook body (example):
+{
+	"url": "webhook.site/something/something",	    //The URL you want the webhook to be posted to
+	"phone_number": "+4797885707",					//Phone number you want to recieve messages to
+	"symbol": "XRP",
+	"target_price": 2                               //$2.0 is the price target
+
+}
+*/
+
+
 
 func readPriceHook(w http.ResponseWriter, r *http.Request) (lib.PriceWebhook, error) {
 	webhook := lib.PriceWebhook{}
@@ -127,6 +139,13 @@ func readPriceHook(w http.ResponseWriter, r *http.Request) (lib.PriceWebhook, er
 	webhook.CurrentPrice = lib.Cryptos[webhook.Symbol].Price
 	webhook.Name = lib.Cryptos[webhook.Symbol].Name
 	webhook.HasTriggered = false
+	webhook.StartPrice = lib.Cryptos[webhook.Symbol].Price
+	if webhook.TargetPrice > webhook.StartPrice{
+		webhook.IsPriceIncrease = true
+	}else{
+		webhook.IsPriceIncrease = false
+	}
+	
 
 	return webhook, nil
 }
