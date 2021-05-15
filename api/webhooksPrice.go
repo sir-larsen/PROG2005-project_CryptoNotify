@@ -32,18 +32,14 @@ func updatePriceWebhook(webhook lib.PriceWebhook) {
 	Triggered := false
 
 	//Logic part of whether a price target has been hit
-	if webhook.IsPriceIncrease == true{
-		if webhook.CurrentPrice >= webhook.TargetPrice{
+	if webhook.IsPriceIncrease == true {
+		if webhook.CurrentPrice >= webhook.TargetPrice {
 			Triggered = true
 		}
-	}else{
-		if webhook.CurrentPrice <= webhook.TargetPrice{
+	} else {
+		if webhook.CurrentPrice <= webhook.TargetPrice {
 			Triggered = true
 		}
 	}
-
-
-
-
 
 }
