@@ -124,6 +124,7 @@ func main() {
 	respBody, _ := ioutil.ReadAll(resp.Body)
 	fmt.Println(string(respBody))*/
 	///
+	api.SendMessage()
 	lib.GetMock()
 	lib.UpdateInternalMap()
 	go cryptoPolling()
