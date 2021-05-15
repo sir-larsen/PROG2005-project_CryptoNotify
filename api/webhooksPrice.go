@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"google.golang.org/api/iterator"
+	"log"
 	"net/http"
 
 	"cloud.google.com/go/firestore"
@@ -151,4 +153,31 @@ func readPriceHook(w http.ResponseWriter, r *http.Request) (lib.PriceWebhook, er
 	}
 
 	return webhook, nil
+}
+
+
+
+//Function for rendering all the webhooks to the user
+func AllPriceWebhooks(w http.ResponseWriter, r *http.Request) {
+	var hooks []lib.PriceWebhook
+	iter := Client.Collection(collectionPrice).Documents(Ctx)
+	for {
+		doc, err := iter.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			log.Fatalf("Failed to iterate: %v", err)
+		}
+		var hook lib.PriceWebhook
+		doc.DataTo(&hook)
+		hook.WebhookID = doc.Ref.ID
+
+		hooks = append(hooks, hook)
+	}
+	w.Header().Add("content-type", "application/json")
+	err := json.NewEncoder(w).Encode(hooks)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
