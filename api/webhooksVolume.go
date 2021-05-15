@@ -41,24 +41,24 @@ func updateVolumeWebhook(webhook lib.VolumeWebhook) { //HUSK Å SKRIVE ENDRINGER
 	x /= 100
 	x *= webhook.PercentThreshold
 
+	//REGNE UT CURRENT PERCENTAGE OG LEGGE INN I WEBHOOK FØR SENDE TIL UPDATE
+	x = webhook.StartVol //Figuring out the current percentage
+	y := webhook.CurrentVol
+	res := x / y
+	res *= 100
+	finalPercentage := 100 - res
+	webhook.CurrentPercentage = finalPercentage //Updating the current percentage for neat tracking
+
 	if webhook.CurrentVol >= webhook.StartVol+x { //Webhook has exceeded threshold, and is triggered
 		webhook.HasTriggered = true
 
 		//POST WEBHOOK
 		postVolumeWebhook(webhook)
 
-		//SMS NOTIFICATION
-		//DELETE WEBHOOK
+		//SMS NOTIFICATION   //TBA
+
+		//DELETE WEBHOOK	 //TBA
 	} else {
-		//REGNE UT CURRENT PERCENTAGE OG LEGGE INN I WEBHOOK FØR SENDE TIL UPDATE
-		x = webhook.StartVol //Figuring out the current percentage
-		y := webhook.CurrentVol
-
-		res := x / y
-		res *= 100
-		finalPercentage := 100 - res
-		webhook.CurrentPercentage = finalPercentage //Updating the current percentage for neat tracking
-
 		//updateWebhookVolumeVol
 		err := updateVolumeWebhookVol(webhook)
 		if err != nil {
@@ -73,7 +73,6 @@ func updateVolumeWebhook(webhook lib.VolumeWebhook) { //HUSK Å SKRIVE ENDRINGER
 			fmt.Println("WEBHOOK_VOLUME WITH FIREBASE_ID: ", webhook.WebhookID, " HAS GONE WRONG IN FIREBASE UPDATE OF CURRENTPERCENTAGE")
 		}
 		//Send webhook to webhook site, not notification by sms, since then you can track changes in current percentage
-		//sendVolumeWebhook
 		postVolumeWebhook(webhook)
 	}
 }
@@ -83,6 +82,7 @@ func postVolumeWebhook(webhook lib.VolumeWebhook) {
 	buffer := new(bytes.Buffer)
 	err := json.NewEncoder(buffer).Encode(webhook)
 	http.Post(webhook.Url, "application/json", buffer)
+	fmt.Println("Volume webhook with webhookID and symbol: ", webhook.WebhookID, ", ", webhook.Symbol, " has been sent")
 	if err != nil {
 		fmt.Println("ERROR IN POST OF VOLUME WEBHOOK", err)
 	}

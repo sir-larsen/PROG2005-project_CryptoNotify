@@ -35,7 +35,7 @@ func port() string {
 // Function for polling, caching the response and then going through the webhooks
 func cryptoPolling() {
 	for {
-		time.Sleep(5 * time.Second)
+		time.Sleep(10 * time.Second)
 
 		if mock {
 			lib.GetMock()
@@ -122,6 +122,7 @@ func main() {
 	fmt.Println(string(respBody))*/
 	///
 	lib.GetMock()
+	lib.UpdateInternalMap()
 	go cryptoPolling()
 
 	port := port()

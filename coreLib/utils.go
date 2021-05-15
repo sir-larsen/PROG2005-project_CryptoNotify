@@ -11,13 +11,17 @@ var Cryptos = make(map[string]CryptoInternal) //Map containing currencies for in
 
 //GetMock - Function for pulling the mocked info on currencies and putting them into in memory storage
 func GetMock() {
-	resp, err := http.Get("https://run.mocky.io/v3/ee4d32e9-1875-4f24-8e3e-1d9fb323bec0")
+	//"https://run.mocky.io/v3/ee4d32e9-1875-4f24-8e3e-1d9fb323bec0" old mock url
+	resp, err := http.Get("https://9f878240-fe54-4229-ba8d-0ee03b66f0b9.mock.pstmn.io/cockandballs.com")
 	if err != nil {
 		fmt.Println(err, "SOMETHING WENT WRONG WHILE FETCHING DATA. RESTART SERVER!")
 	}
 	defer resp.Body.Close()
+	//fmt.Println(resp.Body)
 	err = json.NewDecoder(resp.Body).Decode(&CryptoResp)
+	//fmt.Println(CryptoResp)
 	fmt.Println("STATUS: MOCK PULLED")
+	//fmt.Println(Cryptos)
 }
 
 //UpdateInternalMap - Function for creating a map for internal representation of currencies
@@ -40,4 +44,5 @@ func UpdateInternalMap() {
 		Cryptos[currency.Symbol] = currency
 	}
 	//fmt.Println(Cryptos)
+	//fmt.Println(Cryptos["ADA"])
 }
