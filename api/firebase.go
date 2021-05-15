@@ -37,3 +37,29 @@ func AddVolumeWebhook(webhook lib.VolumeWebhook, w http.ResponseWriter, r *http.
 		http.Error(w, ref.ID, http.StatusCreated) // Returns document ID
 	}
 }
+
+
+
+func AddPriceWebhook(webhook lib.PriceWebhook, w http.ResponseWriter, r *http.Request) {
+
+	ref, _, err := Client.Collection(collectionPrice).Add(Ctx, map[string]interface{}{
+		"CurrentPrice":		 webhook.CurrentPrice,
+		"HasTriggered":      webhook.HasTriggered,
+		"IsPriceIncrease":   webhook.IsPriceIncrease,
+		"Name":              webhook.Name,
+		"Number":            webhook.Number,
+		"StartPrice":        webhook.StartPrice,
+		"Symbol": 			 webhook.Symbol,
+		"TargetPrice":       webhook.TargetPrice,
+		"Url":               webhook.Url,
+
+	})
+	if err != nil {
+		http.Error(w, "Error when adding webhook "+webhook.Url, http.StatusBadRequest)
+	} else {
+		fmt.Println("Entry added to collection.")
+		http.Error(w, ref.ID, http.StatusCreated) // Returns document ID
+	}
+}
+
+
