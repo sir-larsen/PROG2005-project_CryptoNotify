@@ -74,8 +74,8 @@ func setupRoutes() *chi.Mux {
 		r.Post("/", api.PriceWebhookReg) //Handling of webhooks to .../notifications
 		r.Delete("/{id}", api.WebhookPriceDel)
 		r.Delete("/", api.WebhookPriceDel)
-		//r.Get("/{id}", api.GetWebhook)
-		//r.Get("/", api.AllHooks)
+		r.Get("/{id}", api.GetPriceWebhook)
+		r.Get("/", api.AllPriceWebhooks)
 
 	})
 
