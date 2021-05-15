@@ -50,12 +50,13 @@ func updatePriceWebhook(webhook lib.PriceWebhook) {
 	if Triggered == true{
 		webhook.HasTriggered = true
 		postPriceWebhook(webhook)
+		// Delete webhook
 	}else {
 
 		err := updatePriceWebhookCurrent(webhook)
 		if err != nil {
 			fmt.Println(err)
-			fmt.Println("WEBHOOK_VOLUME WITH FIREBASE_ID: ", webhook.WebhookID, " HAS GONE WRONG IN FIREBASE UPDATE OF CURRENTVOL")
+			fmt.Println("WEBHOOK_VOLUME WITH FIREBASE_ID: ", webhook.WebhookID, " HAS GONE WRONG IN FIREBASE UPDATE OF CURRENT PRICE")
 		}
 
 	}
