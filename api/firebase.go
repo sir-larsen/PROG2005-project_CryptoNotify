@@ -10,14 +10,14 @@ import (
 	//firestore "cloud.google.com/go/firestore/apiv1"
 )
 
-var CollectionVolume = "webhooks_volume"
+var collectionVolume = "webhooks_volume"
 var Ctx context.Context
 var Client *firestore.Client
 var projectID = "cloud-project-dd1b4"
 
 func AddVolumeWebhook(webhook lib.VolumeWebhook, w http.ResponseWriter, r *http.Request) {
 
-	ref, _, err := Client.Collection(CollectionVolume).Add(Ctx, map[string]interface{}{
+	ref, _, err := Client.Collection(collectionVolume).Add(Ctx, map[string]interface{}{
 		"CurrentPercentage": webhook.CurrentPercentage,
 		"CurrentVol":        webhook.CurrentVol,
 		"HasTriggered":      webhook.HasTriggered,
