@@ -89,6 +89,12 @@ func main() {
 	defer api.Client.Close()
 	//Firebase initialization end
 
+	/*x := 758321
+	x /= 100
+	fmt.Println("1% of x is: ", x)
+	x *= 4
+	fmt.Println("4% of x is: ", x)*/
+
 	///TEST
 	/*client := &http.Client{}
 	req, err := http.NewRequest("GET", "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest", nil)

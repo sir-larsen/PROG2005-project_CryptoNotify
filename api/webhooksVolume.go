@@ -6,6 +6,8 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+
+	"cloud.google.com/go/firestore"
 )
 
 var volumeWebhooks = make(map[string]lib.VolumeWebhook)
@@ -25,13 +27,69 @@ func CheckVolumeWebhooks() {
 		webhook.WebhookID = snap.Ref.ID
 		volumeWebhooks[webhook.WebhookID] = webhook
 
-		//updateVolumeWebhook
+		//updateVolumeWebhook(webhook)
 	}
 }
 
-func updateVolumeWebhook() {
+func updateVolumeWebhook(webhook lib.VolumeWebhook) { //HUSK Å SKRIVE ENDRINGER TILBAKE TIL FIREBASE
 	//DO ALL THE VOLUME STUFF CHECKS
 	//IF TRIGGERED, SEND TO URL AND POSSIBLY PHONE NUMBA
+
+	webhook.CurrentVol = lib.Cryptos[webhook.Symbol].Vol24 //Checking if the volume has reached the percentage threshold
+	x := webhook.StartVol
+	x /= 100
+	x *= webhook.PercentThreshold
+
+	if webhook.CurrentVol >= webhook.StartVol+x { //Webhook has exceeded threshold, and is triggered
+		webhook.HasTriggered = true
+		//POST WEBHOOK
+		//SMS NOTIFICATION
+		//DELETE WEBHOOK
+	} else {
+		//REGNE UT CURRENT PERCENTAGE OG LEGGE INN I WEBHOOK FØR SENDE TIL UPDATE
+
+		//updateWebhookVolumeVol
+		err := updateVolumeWebhookVol(webhook)
+		if err != nil {
+			fmt.Println(err)
+			fmt.Println("WEBHOOK_VOLUME WITH FIREBASE_ID: ", webhook.WebhookID, " HAS GONE WRONG IN FIREBASE UPDATE OF CURRENTVOL")
+		}
+
+		//updateWebhookVolumePercentage
+		err = updateVolumeWebhookPercentage(webhook)
+		if err != nil {
+			fmt.Println(err)
+			fmt.Println("WEBHOOK_VOLUME WITH FIREBASE_ID: ", webhook.WebhookID, " HAS GONE WRONG IN FIREBASE UPDATE OF CURRENTPERCENTAGE")
+		}
+
+	}
+
+}
+
+func updateVolumeWebhookVol(webhook lib.VolumeWebhook) error {
+	_, err := Client.Collection(collectionVolume).Doc(webhook.WebhookID).Update(Ctx, []firestore.Update{
+		{
+			Path:  "CurrentVol",
+			Value: webhook.CurrentVol,
+		},
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func updateVolumeWebhookPercentage(webhook lib.VolumeWebhook) error {
+	_, err := Client.Collection(collectionVolume).Doc(webhook.WebhookID).Update(Ctx, []firestore.Update{
+		{
+			Path:  "CurrentPercentage",
+			Value: webhook.CurrentPercentage,
+		},
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 //VolumeWebhookReg - Intermediate function for adding webhooks regarding volume changes on the server

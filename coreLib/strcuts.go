@@ -49,8 +49,8 @@ type VolumeWebhook struct {
 	Symbol            string  `json:"symbol"`
 	StartVol          float64 `json:"starting_volume"`
 	CurrentVol        float64 `json:"current_volume"`
-	PercentThreshold  float32 `json:"percentage_threshold"`
-	CurrentPercentage float32 `json:"current_percenatge"`
+	PercentThreshold  float64 `json:"percentage_threshold"`
+	CurrentPercentage float64 `json:"current_percenatge"`
 	HasTriggered      bool    `json:"webhook_has_triggered"` //Volume webhook will be deleted upon invocation
 	WebhookID         string  `json:"webhook_id"`
 }
